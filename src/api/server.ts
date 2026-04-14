@@ -4,6 +4,7 @@ import { env } from '../config/index.js';
 import { logger } from '../utils/logger.js';
 
 import evaluationRoutes from './routes/evaluation.routes.js';
+import { getEvaluationStatus } from './controllers/evaluation.controller.js';
 
 export const createApp = () => {
   const app = express();
@@ -13,6 +14,7 @@ export const createApp = () => {
 
   // Routes
   app.use('/evaluate', evaluationRoutes);
+  app.get('/result/:id', getEvaluationStatus);
 
   // Health check
   app.get('/health', (req, res) => {

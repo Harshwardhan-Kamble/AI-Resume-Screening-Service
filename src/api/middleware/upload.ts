@@ -16,6 +16,7 @@ export const upload = multer({
   storage,
   limits: {
     fileSize: env.MAX_FILE_SIZE_MB * 1024 * 1024,
+    fieldSize: 5 * 1024 * 1024, // 5MB for the JD text field
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype === 'application/pdf') {

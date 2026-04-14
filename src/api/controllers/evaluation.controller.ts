@@ -58,19 +58,25 @@ export const getEvaluationStatus = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Evaluation not found' });
     }
 
-    // Return the full record including score and verdict if finished
+    // Handle PENDING/PROCESSING status
+    if (evaluation.status === 'PENDING' || evaluation.status === 'PROCESSING') {
+      return res.status(200).json({
+        status: evaluation.status.toLowerCase(),
+        score: null,
+        verdict: null,
+        missing_requirements: [],
+        justification: 'The evaluation is still being processed by our AI.',
+      });
+    }
+
+    // Return the full record for COMPLETED or FAILED
     return res.status(200).json({
-      evaluation_id: evaluation.id,
       status: evaluation.status.toLowerCase(),
-      result: evaluation.status === 'COMPLETED' ? {
-        score: evaluation.score,
-        verdict: evaluation.verdict,
-        missing_requirements: evaluation.missingRequirements,
-        justification: evaluation.justification,
-      } : null,
-      error: evaluation.error,
-      created_at: evaluation.createdAt,
-      completed_at: evaluation.completedAt,
+      score: evaluation.score,
+      verdict: evaluation.verdict,
+      missing_requirements: evaluation.missingRequirements || [],
+      justification: evaluation.justification,
+      error: evaluation.error, // Optional: helpful for debugging failed runs
     });
   } catch (error) {
     logger.error('Failed to fetch evaluation status:', error);

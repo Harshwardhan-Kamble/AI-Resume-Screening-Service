@@ -11,6 +11,8 @@ const envSchema = z.object({
   REDIS_PORT: z.string().default('6379'),
   GEMINI_API_KEY: z.string(),
   GEMINI_MODEL: z.string().default('gemini-1.5-pro'),
+  OLLAMA_BASE_URL: z.string().default('http://localhost:11434'),
+  OLLAMA_MODEL: z.string().default('gemma'),
   UPLOAD_DIR: z.string().default('uploads'),
   MAX_FILE_SIZE_MB: z.string().transform(Number).default('10'),
   LOG_LEVEL: z.enum(['info', 'debug', 'error', 'warn']).default('info'),
