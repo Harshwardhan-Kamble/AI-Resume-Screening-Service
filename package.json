@@ -9,6 +9,8 @@
     "dev": "tsx watch src/index.ts",
     "dev:api": "tsx watch src/api/index.ts",
     "dev:worker": "tsx watch src/worker/main.ts",
+    "start:api": "node dist/api/index.js",
+    "start:worker": "node dist/worker/main.js",
     "build": "rimraf dist && tsc",
     "lint": "eslint 'src/**/*.ts' --fix",
     "format": "prettier --write 'src/**/*.ts'",
