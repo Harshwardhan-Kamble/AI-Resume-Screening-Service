@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EvaluationStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Evaluation {
+  id                   String           @id @default(uuid())
+  status               EvaluationStatus @default(PENDING)
+  jobDescription       String           @map("job_description")
+  resumePath           String           @map("resume_path")
+  resumeText           String?          @map("resume_text")
+  score                Int?
+  verdict              String?
+  missingRequirements  Json?            @map("missing_requirements")
+  justification        String?
+  error                String?
+  retryCount           Int              @default(0) @map("retry_count")
+  createdAt            DateTime         @default(now()) @map("created_at")
+  updatedAt            DateTime         @updatedAt @map("updated_at")
+  completedAt          DateTime?        @map("completed_at")
+
+  @@map("evaluations")
+}
