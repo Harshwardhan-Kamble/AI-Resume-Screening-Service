@@ -6,9 +6,12 @@ A high-precision, privacy-focused resume screening service that leverages a **Hy
 
 The system is designed for high reliability and clean data signal:
 
-1.  **Frontend/API (Express)**: Handles multipart resume uploads (PDF) and enqueues jobs.
-2.  **Task Queue (BullMQ/Redis)**: Manages background processing with automatic retries.
-3.  **Preprocessing (Local BERT)**: Uses a local `all-MiniLM-L6-v2` model to "clean" and refine resume/JD text before it reaches the cloud. This significantly reduces hallucinations.
+1.  **Frontend/API (Express)**: A stateless REST API that validates incoming PDF resumes and enqueues them for processing.
+2.  **Worker Queue Design (BullMQ/Redis)**:
+    - **Asynchronous Processing**: Immediate `202 Accepted` response.
+    - **Reliability**: Configured with **Exponential Backoff** (5s, 10s, 20s) to survive AI API rate limits (429) or temporary outages.
+    - **Concurrency**: Optimized for scale—the worker is separated from the API process and can be scaled independently.
+3.  **Preprocessing (Local BERT)**: Uses a local `all-MiniLM-L6-v2` model to "clean" text locally. This filters noise and boosts the "signal" before the data reaches the cloud LLM.
 4.  **Evaluation (Gemini 2.5)**: A high-precision cloud LLM analyzes the refined text against strict business rules (Seniority, Tech Stack, Education).
 5.  **Database (PostgreSQL/Prisma)**: Stores evaluation results, scorecard JSONs, and justifications.
 
@@ -66,7 +69,7 @@ npm test
 **POST** `/evaluate`
 - Body: `multipart/form-data`
 - Fields: `resume` (file), `job_description` (text)
-- Returns: `201 Created` with `evaluation_id`.
+- Returns: `202 Accepted` with `evaluation_id`.
 
 ### 2. Fetch Result
 **GET** `/result/:id`
