@@ -3,11 +3,16 @@ import cors from 'cors';
 import { env } from '../config/index.js';
 import { logger } from '../utils/logger.js';
 
+import evaluationRoutes from './routes/evaluation.routes.js';
+
 export const createApp = () => {
   const app = express();
 
   app.use(cors());
   app.use(express.json());
+
+  // Routes
+  app.use('/evaluate', evaluationRoutes);
 
   // Health check
   app.get('/health', (req, res) => {
